@@ -49,30 +49,29 @@ export default function QueryForm(props: QueryFormProps) {
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         console.log('making request');
-        axios.get(NEO4J_SERVER_ADDRESS + '/test')
-        // axios.get(NEO4J_SERVER_ADDRESS + '/search', {
-        //     params: {
-        //       id: id,
-        //       uploader: uploader,
-        //       lrate: lrate,
-        //       hrate: hrate,
-        //       lRatings: lRatings,
-        //       hRatings: hRatings,
-        //       lComments: lComments,
-        //       hComments: hComments,
-        //       lLength: lLength,
-        //       hLength: hLength,
-        //       lViews: lViews,
-        //       hViews: hViews,
-        //       startDate: dateRange.startDate?.diff(YOUTUBE_DATE, 'day'),
-        //       endDate: dateRange.endDate?.diff(YOUTUBE_DATE, 'day'),
-        //       categories: categories,
-        //       excludeC: excludeC,
-        //       excludeU: excludeU,
-        //       excludeV: excludeV,
-        //       limit: limit
-        //     }
-        // })
+        axios.get(NEO4J_SERVER_ADDRESS + '/search', {
+            params: {
+              id: id,
+              uploader: uploader,
+              lrate: lrate,
+              hrate: hrate,
+              lRatings: lRatings,
+              hRatings: hRatings,
+              lComments: lComments,
+              hComments: hComments,
+              lLength: lLength,
+              hLength: hLength,
+              lViews: lViews,
+              hViews: hViews,
+              startDate: dateRange.startDate?.diff(YOUTUBE_DATE, 'day'),
+              endDate: dateRange.endDate?.diff(YOUTUBE_DATE, 'day'),
+              categories: categories,
+              excludeC: excludeC,
+              excludeU: excludeU,
+              excludeV: excludeV,
+              limit: limit
+            }
+        })
         .then(response => {
             props.onChange(response.data as VideoGraphData)
         })
