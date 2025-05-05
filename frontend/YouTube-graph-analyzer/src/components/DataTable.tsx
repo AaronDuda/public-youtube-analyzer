@@ -86,11 +86,11 @@ export default function dataTable(props: DataTableProps) {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - (props?.graph?.data ? props.graph.data.video[0].length : 0)) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - (props?.graph?.data?.video ? props.graph.data.video[0].length : 0)) : 0;
 
   const visibleRows = React.useMemo(
     () => {
-      if (props?.graph?.data) {
+      if (props?.graph?.data?.video) {
         return [...props.graph.data.video[0]].slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       } else {
         return []
@@ -162,7 +162,7 @@ export default function dataTable(props: DataTableProps) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={props?.graph?.data ? props.graph.data.video[0].length : 0}
+          count={props?.graph?.data?.video ? props.graph.data.video[0].length : 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

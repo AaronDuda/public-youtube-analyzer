@@ -66,9 +66,9 @@ export default function QueryForm(props: QueryFormProps) {
               startDate: dateRange.startDate?.diff(YOUTUBE_DATE, 'day'),
               endDate: dateRange.endDate?.diff(YOUTUBE_DATE, 'day'),
               categories: categories,
-              excludeC: excludeC,
-              excludeU: excludeU,
-              excludeV: excludeV,
+              excludeC: excludeC ? true : undefined,
+              excludeU: excludeU ? true : undefined,
+              excludeV: excludeV ? true : undefined,
               limit: limit
             }
         })
@@ -76,7 +76,7 @@ export default function QueryForm(props: QueryFormProps) {
             props.onChange(response.data as VideoGraphData)
         })
         .catch(error => {
-            console.error('Error fetching users:', error);
+            console.error('Error attempting to query neo4j', error);
         });
     };
 

@@ -6,6 +6,24 @@ export type GraphProps = {
     graph: VideoGraphData | undefined;
 };
 
+type Neo4jNode = Node & {
+    identity: { low: number, high: number },
+    labels: string[],
+    properties: Record<string, any>,
+    elementId: string
+};
+  
+type Neo4jRelationship = Relationship & {
+    identity: { low: number, high: number },
+    start: { low: number, high: number },
+    end: { low: number, high: number },
+    type: string,
+    properties: object,
+    elementId: string,
+    startNodeElementId: string,
+    endNodeElementId: string
+}
+
 type VideoProperties = {
     comments: { low: number, high: number },
     rate: number,
@@ -50,13 +68,13 @@ type UploaderNode = Node & {
 
 export type VideoGraphData = {
     data: {
-        video: VideoNode[][],
-        related_video: VideoNode[][],
-        category: CategoryNode[][],
-        uploader: UploaderNode[][],
-        uploaded_by: VideoRelationship[][],
-        related_to: VideoRelationship[][],
-        video_type: VideoRelationship[][]
+        video: VideoNode[][] | undefined,
+        related_video: VideoNode[][] | undefined,
+        category: CategoryNode[][] | undefined,
+        uploader: UploaderNode[][] | undefined,
+        uploaded_by: VideoRelationship[][] | undefined,
+        related_to: VideoRelationship[][] | undefined,
+        video_type: VideoRelationship[][] | undefined
     },
     statistics: {
         video_count: number,
@@ -67,6 +85,31 @@ export type VideoGraphData = {
     }
 };
 
+const convertNeo4jNodeToGraphNode = (nodes: Neo4jNode[], color: string) => (
+    nodes.map(node => ({
+        id: String(node.identity.low),
+        color: color,
+        data: {
+            label: node.labels[0],
+            ...node.properties,
+        }
+    }))
+);
+
+
+const convertNeo4jRelationshipToGraphRelationship = (rels: Neo4jRelationship[]) => (
+    rels.map(rel => ({
+        id: String(rel.identity.low),
+        from: String(rel.start.low),
+        to: String(rel.end.low),
+        data: {
+            source: String(rel.start.low),
+            target: String(rel.end.low),
+            label: rel.type,
+            ...rel.properties
+        },
+    }))
+);
   
   
 
@@ -93,6 +136,14 @@ export default function Graph(props : GraphProps) {
     onZoom: (zoomLevel: number) => console.log('onZoom', zoomLevel)
   }
 
+  let videos = props?.graph?.data?.video ? convertNeo4jNodeToGraphNode(props.graph.data.video[0], 'green') : [];
+  let related_video = props?.graph?.data?.related_video ? convertNeo4jNodeToGraphNode(props.graph.data.related_video[0], 'green') : [];
+  let uploaders = props?.graph?.data?.uploader ? convertNeo4jNodeToGraphNode(props.graph.data.uploader[0], 'yellow') : [];
+  let categories = props?.graph?.data?.category ? convertNeo4jNodeToGraphNode(props.graph.data.category[0], 'red') : [];
+  let related_to = props?.graph?.data?.related_to ? convertNeo4jRelationshipToGraphRelationship(props.graph.data.related_to[0]) : [];
+  let uploaded_by = props?.graph?.data?.uploaded_by ? convertNeo4jRelationshipToGraphRelationship(props.graph.data.uploaded_by[0]) : [];
+  let video_type = props?.graph?.data?.video_type ? convertNeo4jRelationshipToGraphRelationship(props.graph.data.video_type[0]) : [];
+
   return (
     <>
       <div
@@ -106,8 +157,17 @@ export default function Graph(props : GraphProps) {
         }}
       >
         <InteractiveNvlWrapper
-          nodes={props?.graph?.data ? [...props.graph.data.video[0], ...props.graph.data.related_video[0], ...props.graph.data.uploader[0], ...props.graph.data.category[0]] : []}
-          rels={props?.graph?.data ? [...props.graph.data.related_to[0], ...props.graph.data.uploaded_by[0], ...props.graph.data.video_type[0]]: []}
+          nodes={[
+                ...videos,
+                ...related_video,
+                ...uploaders,
+                ...categories
+              ]}
+          rels={[
+                ...related_to, 
+                ...video_type, 
+                ...uploaded_by
+            ]}
           mouseEventCallbacks={mouseEventCallbacks}
           onClick={(evt) => console.log('custom click event', evt)}
         />
