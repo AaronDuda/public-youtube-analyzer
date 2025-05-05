@@ -10,8 +10,6 @@ import TableRow from '@mui/material/TableRow';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import { VideoGraphData } from './Graph';
 
 export type DataTableProps = {
@@ -19,7 +17,6 @@ export type DataTableProps = {
 }
 
 interface HeadCell {
-  disablePadding: boolean;
   id: string;
   label: string;
   numeric: boolean;
@@ -29,37 +26,31 @@ const headCells: readonly HeadCell[] = [
   {
     id: 'id',
     numeric: false,
-    disablePadding: true,
     label: 'Video ID',
   },
   {
     id: 'views',
     numeric: true,
-    disablePadding: false,
     label: 'Views',
   },
   {
     id: 'ratings',
     numeric: true,
-    disablePadding: false,
     label: 'Ratings',
   },
   {
     id: 'rate',
     numeric: true,
-    disablePadding: false,
     label: 'Average rating',
   },
   {
     id: 'comments',
     numeric: true,
-    disablePadding: false,
     label: 'Comments',
   },
   {
     id: 'age',
     numeric: true,
-    disablePadding: false,
     label: 'Date',
   },
 ];
@@ -67,7 +58,6 @@ const headCells: readonly HeadCell[] = [
 
 export default function dataTable(props: DataTableProps) {
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
 
@@ -78,10 +68,6 @@ export default function dataTable(props: DataTableProps) {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -107,7 +93,7 @@ export default function dataTable(props: DataTableProps) {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size={'medium'}
           >
             <TableHead>
                 <TableRow>
@@ -115,7 +101,6 @@ export default function dataTable(props: DataTableProps) {
                     <TableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
-                        padding={headCell.disablePadding ? 'none' : 'normal'}
                     >
                         {headCell.label}
                     </TableCell>
@@ -150,7 +135,7 @@ export default function dataTable(props: DataTableProps) {
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: (dense ? 33 : 53) * emptyRows,
+                    height: (53) * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />
@@ -169,10 +154,6 @@ export default function dataTable(props: DataTableProps) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
     </Box>
   );
 }
